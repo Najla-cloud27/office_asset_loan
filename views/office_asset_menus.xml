@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Top Menu (Menu Utama di Navbar Atas) -->
+    <menuitem id="menu_office_asset_root"
+              name="Asset Loan"
+              sequence="10"/>
+
+    <!-- Sub Menu Categories (Kategori Menu) -->
+    <menuitem id="menu_office_asset_main"
+              name="Management"
+              parent="menu_office_asset_root"
+              sequence="10"/>
+
+    <!-- Menu Item Aset (Menghubungkan ke Action) -->
+    <menuitem id="menu_office_asset_list"
+              name="Office Assets"
+              parent="menu_office_asset_main"
+              action="action_office_asset"
+              sequence="10"/>
+
+</odoo>

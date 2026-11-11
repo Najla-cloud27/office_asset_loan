@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- 1. List View (Odoo 19: wajib <list>, bukan <tree>) -->
+    <record id="view_office_asset_loan_list" model="ir.ui.view">
+        <field name="name">office.asset.loan.list</field>
+        <field name="model">office.asset.loan</field>
+        <field name="arch" type="xml">
+            <list string="Asset Loans"
+                  decoration-danger="is_overdue"
+                  decoration-muted="state == 'cancelled'">
+                <field name="name"/>
+                <field name="asset_id"/>
+                <field name="borrower_id"/>
+                <field name="loan_date"/>
+                <field name="due_date"/>
+                <field name="return_date" optional="hide"/>
+                <field name="purpose" optional="hide"/>
+                <field name="duration_days" string="Duration" optional="hide"/>
+                <field name="is_overdue" string="Overdue"/>
+                <field name="state"
+                       widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-warning="state == 'borrowed'"
+                       decoration-success="state == 'returned'"
+                       decoration-danger="state == 'cancelled'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- 2. Form View (tombol tampil/sembunyi pakai ekspresi Python langsung, tanpa attrs/states) -->
+    <record id="view_office_asset_loan_form" model="ir.ui.view">
+        <field name="name">office.asset.loan.form</field>
+        <field name="model">office.asset.loan</field>
+        <field name="arch" type="xml">
+            <form string="Asset Loan">
+                <header>
+                    <button name="action_borrow" type="object" string="Borrow"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_return" type="object" string="Return"
+                            class="btn-primary" invisible="state != 'borrowed'"/>
+                    <button name="action_cancel" type="object" string="Cancel"
+                            class="btn-secondary" invisible="state not in ('draft', 'borrowed')"
+                            confirm="Yakin ingin membatalkan peminjaman ini?"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,borrowed,returned"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <!-- Peringatan muncul saat peminjaman telat -->
+                    <div class="alert alert-danger" role="alert" invisible="not is_overdue">
+                        <strong>Terlambat!</strong> Peminjaman ini sudah melewati jatuh tempo.
+                    </div>
+                    <group>
+                        <group>
+                            <field name="asset_id"/>
+                            <field name="borrower_id"/>
+                            <field name="purpose" placeholder="Untuk keperluan apa aset dipinjam?"/>
+                        </group>
+                        <group>
+                            <field name="loan_date"/>
+                            <field name="due_date"/>
+                            <field name="return_date"/>
+                            <field name="duration_days"/>
+                            <field name="is_overdue" invisible="state != 'borrowed'"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View Loan -->
+    <record id="view_office_asset_loan_search" model="ir.ui.view">
+        <field name="name">office.asset.loan.search</field>
+        <field name="model">office.asset.loan</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- 4. Window Action -->
+    <record id="action_office_asset_loan" model="ir.actions.act_window">
+        <field name="name">Asset Loans</field>
+        <field name="res_model">office.asset.loan</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_office_asset_loan_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Catat peminjaman aset pertama kamu!
+            </p>
+            <p>
+                Buat peminjaman baru, lalu klik tombol Borrow untuk menandai aset keluar.
+            </p>
+        </field>
+    </record>
+
+    <!-- 5. Menu Item (parent mengacu ke menu di office_asset_menus.xml) -->
+    <menuitem id="menu_office_asset_loan_list"
+              name="Asset Loans"
+              parent="menu_office_asset_main"
+              action="action_office_asset_loan"
+              sequence="20"/>
+
+</odoo>

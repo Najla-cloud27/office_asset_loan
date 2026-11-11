@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- 1. List View (Odoo 19: wajib <list>, bukan <tree>) -->
+    <record id="view_office_asset_list" model="ir.ui.view">
+        <field name="name">office.asset.list</field>
+        <field name="model">office.asset</field>
+        <field name="arch" type="xml">
+            <list string="Office Assets"
+                  decoration-warning="not is_available"
+                  decoration-muted="not active">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="category"/>
+                <field name="condition"
+                       widget="badge"
+                       decoration-success="condition == 'good'"
+                       decoration-warning="condition == 'fair'"
+                       decoration-danger="condition == 'damaged'"/>
+                <field name="purchase_date" optional="hide"/>
+                <field name="is_available" string="Available"/>
+                <field name="loan_count" string="Loans"/>
+                <field name="active" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- 2. Form View -->
+    <record id="view_office_asset_form" model="ir.ui.view">
+        <field name="name">office.asset.form</field>
+        <field name="model">office.asset</field>
+        <field name="arch" type="xml">
+            <form string="Office Asset">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Nama Aset (misal: Laptop Dell XPS)"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="category"/>
+                            <field name="condition"/> <!-- widget="badge" dihapus di sini agar BISA DIKLIK/EDIT -->
+                            <field name="purchase_date"/>
+                        </group>
+                        <group>
+                            <field name="active" widget="boolean_toggle"/>
+                            <field name="is_available"/>
+                            <field name="loan_count" string="Jumlah Peminjaman"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="note" placeholder="Catatan internal mengenai aset ini..."/>
+                    </group>
+                    <!-- Peringatan muncul saat aset sedang dipinjam -->
+                    <div class="alert alert-warning" role="alert" invisible="is_available">
+                        <strong>Aset ini sedang dipinjam</strong> (ada peminjaman berstatus Borrowed).
+                    </div>
+                    <notebook>
+                        <page string="Loans" name="loans">
+                            <field name="loan_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="borrower_id"/>
+                                    <field name="loan_date"/>
+                                    <field name="due_date"/>
+                                    <field name="return_date" optional="hide"/>
+                                    <field name="state"
+                                           widget="badge"
+                                           decoration-info="state == 'draft'"
+                                           decoration-warning="state == 'borrowed'"
+                                           decoration-success="state == 'returned'"
+                                           decoration-danger="state == 'cancelled'"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- 3. Search View Aset -->
+    <record id="view_office_asset_search" model="ir.ui.view">
+        <field name="name">office.asset.search</field>
+        <field name="model">office.asset</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="code"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- 4. Window Action -->
+    <record id="action_office_asset" model="ir.actions.act_window">
+        <field name="name">Office Assets</field>
+        <field name="res_model">office.asset</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_office_asset_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Buat aset kantor pertama kamu!
+            </p>
+            <p>
+                Catat semua aset kantor beserta riwayat peminjamannya di sini.
+            </p>
+        </field>
+    </record>
+
+</odoo>

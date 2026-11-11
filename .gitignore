@@ -1,0 +1,12 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Odoo
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini

@@ -1,7 +1,7 @@
 from datetime import timedelta
 
 from odoo import api, fields, models
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 from odoo.tools.translate import _
 
 
@@ -89,6 +89,19 @@ class OfficeAssetLoan(models.Model):
             return [('state', '=', 'borrowed'), ('due_date', '<', today)]
         return ['|', ('state', '!=', 'borrowed'), ('due_date', '>=', today)]
 
+    # BR-2: Validasi due_date tidak boleh lebih awal dari loan_date
+    @api.constrains('loan_date', 'due_date')
+    def _check_dates(self):
+        for record in self:
+            if (
+                record.loan_date
+                and record.due_date
+                and record.due_date < record.loan_date
+            ):
+                raise ValidationError(
+                    _('Tanggal Due Date tidak boleh lebih awal dari Tanggal Loan Date!')
+                )
+
     @api.model_create_multi
     def create(self, vals_list):
         # Generate nomor referensi dari sequence LOAN/000X
@@ -110,6 +123,12 @@ class OfficeAssetLoan(models.Model):
         for record in self:
             if record.state != 'draft':
                 raise UserError(_('Hanya peminjaman berstatus Draft yang bisa dipinjam.'))
+            # BR-4: aset rusak tidak boleh dipinjam
+            if record.asset_id.condition == 'damaged':
+                raise UserError(
+                    _('Peminjaman ditolak karena kondisi aset "%s" sedang Damaged (rusak).')
+                    % record.asset_id.name
+                )
             if record.asset_id and not record.asset_id.is_available:
                 raise UserError(
                     _('Aset "%s" sedang dipinjam dan belum dikembalikan.') % record.asset_id.name

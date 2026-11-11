@@ -108,8 +108,8 @@ Jika salah satu syarat tidak terpenuhi, sistem menampilkan error dan status
 transaksi tidak berubah.
 
 - **Implementasi:** `action_borrow()` dengan `UserError`.
-- **Pesan error:** *"Peminjaman ditolak karena kondisi aset dalam keadaan Rusak (Damaged)!"*
-  dan *"Aset ini sedang dipinjam oleh peminjaman lain!"*
+- **Pesan error:** `Peminjaman ditolak karena kondisi aset "%s" sedang Damaged (rusak).`
+  dan `Aset "%s" sedang dipinjam dan belum dikembalikan.`
 
 ### BR-5 — Pengembalian Aset Mencatat Tanggal Kembali
 Aksi **Return** mengubah status transaksi menjadi **Returned** dan mengisi
@@ -129,9 +129,8 @@ Transaksi peminjaman yang sudah berstatus **Borrowed** atau **Returned** tidak
 boleh dihapus untuk menjaga jejak audit. Penghapusan hanya diizinkan untuk
 transaksi **Draft** dan **Cancelled**.
 
-- **Implementasi:** `@api.ondelete(at_uninstall=False)` pada `_unlink_except_borrowed_or_returned()`
-  dan pengaman tambahan pada override `unlink()`.
-- **Pesan error:** *"Peminjaman yang berstatus Borrowed atau Returned tidak boleh dihapus!"*
+- **Implementasi:** override `unlink()` pada model `office.asset.loan` dengan `UserError`.
+- **Pesan error:** `Peminjaman %s tidak boleh dihapus karena berstatus %s.`
 
 ### BR-8 — Jatuh Tempo Otomatis 7 Hari
 Saat `loan_date` diisi atau diubah, `due_date` otomatis diisi dengan
@@ -303,7 +302,6 @@ Modul ini mengikuti konvensi Odoo 19, antara lain:
 - `create()` menggunakan decorator `@api.model_create_multi` dengan `vals_list`.
 - Visibilitas field/tombol menggunakan atribut `invisible="<ekspresi Python>"`
   (bukan `attrs`/`states`).
-- Penghapusan yang dibatasi menggunakan `@api.ondelete(at_uninstall=False)`.
 
 ---
 

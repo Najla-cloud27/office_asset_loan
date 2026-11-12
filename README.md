@@ -157,6 +157,11 @@ office_asset_loan/
 │   └── office_asset_loan.py             # Model office.asset.loan (transaksi pinjam)
 ├── security/
 │   └── ir.model.access.csv              # Hak akses model untuk base.group_user
+├── static/
+│   └── description/                     # Gambar screenshot untuk README
+│       ├── List_Peminjaman.png
+│       ├── form_aset.png
+│       └── form_borrowed.png
 └── views/
     ├── office_asset_views.xml           # List, form, search, action Office Asset
     ├── office_asset_loan_views.xml      # List, form, search, action, menu Asset Loan
@@ -172,6 +177,7 @@ office_asset_loan/
 | `views/` | Berisi definisi XML untuk tampilan list/form/search, window action, dan menu. |
 | `security/` | Berisi aturan hak akses (`ir.model.access.csv`). |
 | `data/` | Berisi data awal, yaitu sequence nomor referensi peminjaman. |
+| `static/description/` | Berisi gambar screenshot yang ditampilkan pada README. |
 
 ### Model dan Field Utama
 
@@ -218,7 +224,23 @@ office_asset_loan/
 
 ---
 
-## 5. Cara Instalasi
+## 5. Screenshots
+
+### Daftar Peminjaman (Asset Loans)
+
+![Daftar Peminjaman](static/description/List_Peminjaman.png)
+
+### Form Peminjaman Berstatus Borrowed
+
+![Form Peminjaman Berstatus Borrowed](static/description/form_borrowed.png)
+
+### Form Master Data Aset
+
+![Form Master Data Aset](static/description/form_aset.png)
+
+---
+
+## 6. Cara Instalasi
 
 ### Prasyarat
 - Odoo 19.0 Community Edition sudah terpasang dan berjalan.
@@ -292,7 +314,7 @@ odoo-bin -c odoo.conf -d nama_database -u office_asset_loan --stop-after-init
 
 ---
 
-## 6. Catatan Teknis (Odoo 19)
+## 7. Catatan Teknis (Odoo 19)
 
 Modul ini mengikuti konvensi Odoo 19, antara lain:
 
@@ -305,7 +327,7 @@ Modul ini mengikuti konvensi Odoo 19, antara lain:
 
 ---
 
-## 7. Lisensi
+## 8. Lisensi
 
 Modul ini dirilis dengan lisensi **LGPL-3**.
 
